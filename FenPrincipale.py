@@ -16,10 +16,22 @@ class FenPrincipale(tk.Tk):
         
 
         self.bouton_quitter = tk.Button(self, text="Quitter", command=self.quitter)
-        self.bouton_quitter.pack(side=tk.TOP, padx=10, pady=10)
+        self.bouton_quitter.pack(side=tk.TOP, padx=10, pady=2)
         
         self.bouton_nouvelle_partie = tk.Button(self, text="Nouvelle partie", command=self.nouvelle_partie)
-        self.bouton_nouvelle_partie.pack( side = tk.TOP, pady=10)
+        self.bouton_nouvelle_partie.pack( side = tk.TOP, pady=2)
+
+        # a button widget which will open a
+        # new window on button click
+        btn = tk.Button(self,
+                    text ="Change colors",
+                    command = self.openNewWindow)
+        btn.pack(pady = 2)
+
+        btn_undo = tk.Button(self,
+                    text ="Undo",
+                    command = self.undo)
+        btn_undo.pack(pady = 2)
         
         self.mot_a_deviner = tk.StringVar()
         self.motActuel = tk.StringVar()
@@ -65,10 +77,50 @@ class FenPrincipale(tk.Tk):
 
         self.__mots = self.charger_mots()
 
+        self.historique_lettres = []
+    # function to open a new window
+    # on a button click
+    def openNewWindow(self):
+        
+        # Toplevel object which will
+        # be treated as a new window
+        newWindow = tk.Tk()
+        # sets the title of the
+        # Toplevel widget
+        newWindow.title("New Window")
+    
+        # sets the geometry of toplevel
+        newWindow.geometry("400x200")
+        newWindow.configure(bg="#c0d9e2")
+
+        self.textcolor = tk.StringVar()
+        self.textcolor.set('background')
+        self.label_color = tk.Label(newWindow, text = 'Choisissez la couleur', font=("Courier", 16), bg="#c0d9e2")
+        self.label_color.pack(pady=10)
+
+        self.bouton_rouge = tk.Button(newWindow, text="Rouge", command=self.rouge)
+        
+        self.bouton_green = tk.Button(newWindow, text="Green", command=self.green)
+        
+        self.bouton_blue = tk.Button(newWindow, text="Blue", command=self.blue)
+        self.bouton_rouge.pack(pady=5,ipadx = 20, ipady = 10)
+        self.bouton_blue.pack(pady=5, ipadx = 20, ipady = 10)
+        self.bouton_green.pack(pady=5,ipadx = 20, ipady = 10)
+
+
+    
+    def blue(self):
+        self.configure(bg="#c0d9e2")
+    def green(self):
+        self.configure(bg="#bfe3b4")
+    def rouge(self):
+        self.configure(bg="#f47174")
+    
     def cliquer(self, index):
         self.boutons[index].config(state=tk.DISABLED)
         lettre = self.boutons[index]['text']
         self.traitement(lettre)
+        self.historique_lettres.append(lettre)
 
     def charger_mots(self):
         mots = []
@@ -119,7 +171,7 @@ class FenPrincipale(tk.Tk):
                 lettreReveal = "".join(copy_to_str)
                 self.motActuel.set(lettreReveal)
         
-        print(self.coupsRestants)
+
         if self.coupsRestants == 9:
             print('cabeca')
             self.zone_affichage.bonhomme_list[0].affiche(self.zone_dessin)
@@ -152,6 +204,33 @@ class FenPrincipale(tk.Tk):
             self.etatPartie.set("Vous avez perdu !")
             print("Vous avez perdu !")
 
+
+    def undo(self):
+        self.zone_dessin.delete(self.zone_affichage.bonhomme_list[0])
+        lettre = self.historique_lettres[-1]
+        print(lettre)
+        self.historique_lettres= self.historique_lettres[: -1]
+        for bouton in self.boutons:
+            if bouton['text'] == lettre:
+                bouton.config(state=tk.NORMAL)
+        
+        if self.coupsRestants < 10:
+            self.coupsRestants +=1
+
+
+        # if self.coupsRestants == 9:
+        #     self.zone_affichage.bonhomme_list[0].affiche(self.zone_dessin)
+        # elif self.coupsRestants == 7:
+        #     self.zone_affichage.bonhomme_list[1].affiche(self.zone_dessin)
+        # elif self.coupsRestants == 5:
+        #     self.zone_affichage.bonhomme_list[2].affiche(self.zone_dessin)
+        # elif self.coupsRestants == 3:
+        #     self.zone_affichage.bonhomme_list[3].affiche(self.zone_dessin)
+        # elif self.coupsRestants == 2:
+        #     self.zone_affichage.bonhomme_list[4].affiche(self.zone_dessin) 
+        # elif self.coupsRestants == 1:
+        #     self.zone_dessin.delete(self.zone_affichage.bonhomme_list[5])
+    
 # class Button(FenPrincipale):
 #         def __init__(self):
 #             self.boutons = []
