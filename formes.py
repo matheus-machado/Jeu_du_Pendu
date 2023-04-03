@@ -6,7 +6,7 @@ couleurs = ['blue','red','green','yellow','white','black']
 
 # ***** classe Forme *****
 class Forme:
-    def __init__(self,x,y,c): # Constructeur
+    def __init__(self, x,y,c): # Constructeur
         self.__xc = x # attribut prive : le nom est precede de "__"
         self.__yc = y
         self.__couleur = c
@@ -34,9 +34,13 @@ class Forme:
     def selection(self,x,y): # verifie si x et y sont sur la forme
         pass
 
+    def set_state(self, s):
+        self.can.itemconfig(self.can, state=s)
+
+
 # ***** classe Rectangle *****
 class Rectangle(Forme):
-    def __init__(self,x,y,l,h,c): # Constructeur
+    def __init__(self, x, y, l, h, c): # Constructeur
         Forme.__init__(self,x,y,c) # Le constructeur de la classe derivee doit faire appel a celui de la classe de base
         self.__l = l  # largeur du rectangle
         self.__h = h # hauteur du rectangle
